@@ -27,7 +27,7 @@ function obtenerComuna(feature) {
 
 let capaBarrios;
 
-fetch("BarriosCali.geojson")
+fetch("BarriosCali_2.geojson")
   .then(response => response.json())
   .then(barrios => {
     capaBarrios = L.geoJSON(barrios, {
@@ -64,7 +64,7 @@ fetch("BarriosCali.geojson")
     map.fitBounds(capaBarrios.getBounds());
   });
 
-fetch("ComunasCali.geojson")
+fetch("ComunasCali_2_2.geojson")
   .then(response => response.json())
   .then(comunas => {
     L.geoJSON(comunas, {
