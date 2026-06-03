@@ -1,5 +1,5 @@
 const ARCHIVO_BARRIOS = "BarriosCali_2.geojson";
-const ARCHIVO_COMUNAS = "ComunasCali_2_2.geojson";
+const ARCHIVO_COMUNAS = "ComunasCali_3.geojson";
 
 const map = L.map("map").setView([3.4516, -76.5320], 12);
 
@@ -13,6 +13,8 @@ function obtenerNombreBarrio(feature) {
          feature.properties.BARRIO ||
          feature.properties.nombre ||
          feature.properties.NOMBRE ||
+         feature.properties.nom_barrio ||
+         feature.properties.NOM_BARRIO ||
          feature.properties.id_barrio ||
          feature.properties.ID_BARRIO ||
          "Sin nombre";
@@ -26,6 +28,11 @@ function obtenerComuna(feature) {
          feature.properties.id_comuna ||
          feature.properties.ID_COMUNA ||
          "Sin dato";
+}
+
+function obtenerNombreComuna(feature) {
+  const comuna = obtenerComuna(feature);
+  return comuna !== "Sin dato" ? `Comuna ${comuna}` : "Comuna sin dato";
 }
 
 let capaBarrios;
@@ -49,6 +56,12 @@ fetch(ARCHIVO_BARRIOS)
       onEachFeature: function(feature, layer) {
         const barrio = obtenerNombreBarrio(feature);
         const comuna = obtenerComuna(feature);
+
+        layer.bindTooltip(barrio, {
+          permanent: false,
+          direction: "center",
+          className: "etiqueta-barrio"
+        });
 
         layer.on("click", function() {
           document.getElementById("panel").innerHTML = `
@@ -90,10 +103,23 @@ fetch(ARCHIVO_COMUNAS)
   })
   .then(comunas => {
     L.geoJSON(comunas, {
+      interactive: false,
+
       style: {
         color: "#000000",
         weight: 2.5,
+        fillColor: "transparent",
         fillOpacity: 0
+      },
+
+      onEachFeature: function(feature, layer) {
+        const nombreComuna = obtenerNombreComuna(feature);
+
+        layer.bindTooltip(nombreComuna, {
+          permanent: false,
+          direction: "center",
+          className: "etiqueta-comuna"
+        });
       }
     }).addTo(map);
   })
